@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Match xHamster font styling */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -76,7 +79,95 @@
   * {
     @apply border-border;
   }
+  html {
+    width: 100%;
+    height: 100%;
+  }
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  button, input, select, textarea {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  /* Video thumbnail enhancements */
+  .video-thumb {
+    @apply transition-all duration-200;
+    position: relative;
+  }
+  
+  .video-thumb:hover {
+    @apply transform;
+  }
+  
+  .video-thumb__image-container {
+    @apply relative overflow-hidden;
+    position: relative;
+  }
+  
+  .video-thumb__image-container::before {
+    content: '';
+    @apply absolute inset-0 bg-black/0 transition-all duration-300 z-10;
+    pointer-events: none;
+  }
+  
+  .video-thumb:hover .video-thumb__image-container::before {
+    @apply bg-black/20;
+  }
+  
+  /* Ensure dropdown menus appear above other content */
+  [data-radix-portal] {
+    z-index: 10000 !important;
+  }
+  
+  /* Navigation dropdown menu styling */
+  nav .relative.group {
+    overflow: visible !important;
+  }
+  
+  /* Ensure navigation dropdown is visible */
+  nav [style*="z-index: 9999"] {
+    z-index: 9999 !important;
+  }
+  
+  /* Smooth scrollbar for category list */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-track {
+    @apply bg-[#0f0f0f] rounded;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded hover:bg-gray-600;
+  }
+  
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Hide scrollbar for navigation */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

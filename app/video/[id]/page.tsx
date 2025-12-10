@@ -2,27 +2,33 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import {
-  Search,
-  Settings,
-  Globe,
-  Upload,
-  Menu,
-  Play,
   Clock,
   ThumbsUp,
   Eye,
   Share2,
   Bookmark,
-  ChevronDown,
-  MessageCircle,
-  X,
   ChevronRight,
+  ChevronDown,
+  Info,
+  X,
+  Play,
+  Settings,
+  MoreVertical,
+  Flag,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Header from '@/components/Header';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Mock video data
 const videoData = {
@@ -205,100 +211,39 @@ export default function VideoPage() {
   const [showPromoBanner, setShowPromoBanner] = useState(true);
   const [showCookieBanner, setShowCookieBanner] = useState(true);
 
-  const handleVideoClick = (videoId: number) => {
-    window.open(`/video/${videoId}`, '_blank');
-  };
-
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white">
-      {/* Header */}
-      <header className="bg-[#0f0f0f] border-b border-gray-800 sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-3">
-            <div className="flex items-center space-x-6">
-              <a href="/" className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
-                  <Play className="w-5 h-5 fill-white" />
-                </div>
-                <span className="text-xl font-bold">
-                  <span className="text-orange-600">X</span>HAMSTER
-                </span>
-              </a>
-              <div className="flex items-center space-x-2">
-                <Globe className="w-4 h-4 text-cyan-400" />
-                <span className="text-sm text-gray-400">EN</span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-
-            <div className="flex-1 max-w-2xl mx-8">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search for videos"
-                  className="w-full bg-[#2a2a2a] border-gray-700 text-white placeholder-gray-500 pr-10"
-                />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 text-orange-600 hover:text-orange-500">
-                  <Search className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
-                <Settings className="w-4 h-4 mr-1" />
-                EN
-              </Button>
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
-                Login
-              </Button>
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white">
-                Sign up for free
-              </Button>
-            </div>
-          </div>
-
-          <nav className="flex items-center space-x-6 py-2 text-sm overflow-x-auto">
-            <button className="hover:text-orange-500 whitespace-nowrap">Videos</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Live Sex</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Categories</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Pornstars</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Creators</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Channels</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Photos</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Jerk Chat</button>
-            <button className="flex items-center space-x-1 hover:text-orange-500 whitespace-nowrap">
-              <span>👑 Premium Videos</span>
-              <Badge className="bg-red-600 text-white text-xs">-50%</Badge>
-            </button>
-            <button className="hover:text-orange-500 whitespace-nowrap">Dating</button>
-            <button className="hover:text-orange-500 whitespace-nowrap">🎮 Play Sex Game</button>
-            <button className="flex items-center space-x-1 text-cyan-400 hover:text-cyan-300 whitespace-nowrap">
-              <Upload className="w-4 h-4" />
-              <span>Upload</span>
-            </button>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen w-full bg-[#1a1a1a] text-white" style={{ backgroundColor: '#1a1a1a', minHeight: '100vh', width: '100%' }}>
+      <Header />
 
       {/* Promotional Banner */}
       {showPromoBanner && (
-        <div className="bg-gradient-to-r from-blue-900 to-purple-900 py-3 relative overflow-hidden">
-          <div className="container mx-auto px-4 flex items-center justify-center space-x-4 text-center">
-            <span className="text-sm font-semibold">WINTER MAGIC SALE ❄️</span>
-            <span className="text-sm">December Deals Kickoff</span>
-            <Button className="bg-red-600 hover:bg-red-700 text-white text-sm">GET +14 MONTHS FREE</Button>
+        <div className="bg-gradient-to-r from-purple-900 via-blue-900 to-purple-900 py-3 md:py-4 relative overflow-hidden border-b border-purple-800/50">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+            }}></div>
           </div>
-          <button
+          <div className="container mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center sm:text-left relative z-10 max-w-[1400px]">
+            <span className="text-sm font-semibold whitespace-nowrap text-yellow-300">WINTER MAGIC SALE ❄️ ⭐</span>
+            <div className="flex items-center space-x-1.5">
+              <span className="text-sm text-white">December Deals Kickoff</span>
+              <button className="text-gray-300 hover:text-white transition-colors" aria-label="More information">
+                <Info className="w-4 h-4" />
+              </button>
+            </div>
+            <Button className="bg-[#f7000a] hover:bg-[#e60009] text-white text-sm whitespace-nowrap rounded-md px-4 py-2 h-8 font-semibold shadow-lg">GET +14 MONTHS FREE</Button>
+          </div>
+          <button 
             onClick={() => setShowPromoBanner(false)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-1 z-20 rounded hover:bg-white/10 transition-colors"
+            aria-label="Close banner"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-6 lg:px-8 py-6 max-w-[1400px]">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main Video Section */}
           <div className="flex-1">
@@ -414,38 +359,110 @@ export default function VideoPage() {
                   {moreVideos.map((video) => (
                     <div
                       key={video.id}
-                      onClick={() => handleVideoClick(video.id)}
-                      className="group cursor-pointer"
+                      className="group cursor-pointer block relative"
                     >
-                      <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold">
-                          {video.duration}
+                      <Link
+                        href={`/video/${video.id}`}
+                        className="block"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          
+                          {/* Play button overlay on hover */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                            <div className="w-14 h-14 bg-black/70 hover:bg-black/80 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200">
+                              <Play className="w-7 h-7 fill-white text-white ml-1" />
+                            </div>
+                          </div>
+
+                          <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold z-20">
+                            {video.duration}
+                          </div>
+                          {video.is4K && (
+                            <div className="absolute top-2 left-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold z-20">
+                              4K
+                            </div>
+                          )}
+                          {video.isLive && (
+                            <div className="absolute top-2 left-2 bg-red-600 px-2 py-1 rounded text-xs font-semibold flex items-center space-x-1 z-20">
+                              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                              <span>Live</span>
+                            </div>
+                          )}
+
+                          {/* Dark overlay on hover */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 z-[5]"></div>
+
+                          {/* Three-dot menu button - appears on hover */}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+                                <button
+                                  className="w-8 h-8 bg-black/80 hover:bg-black/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  aria-label="More options"
+                                >
+                                  <MoreVertical className="w-4 h-4 text-white" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                align="end"
+                                className="w-48 bg-[#1a1a1a] border-gray-800 text-white z-[10000]"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Bookmark className="w-4 h-4 mr-2" />
+                                  Save
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Share2 className="w-4 h-4 mr-2" />
+                                  Share
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-gray-800" />
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Flag className="w-4 h-4 mr-2" />
+                                  Report
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
-                        {video.is4K && (
-                          <div className="absolute top-2 left-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold">
-                            4K
-                          </div>
-                        )}
-                        {video.isLive && (
-                          <div className="absolute top-2 left-2 bg-red-600 px-2 py-1 rounded text-xs font-semibold flex items-center space-x-1">
-                            <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                            <span>Live</span>
-                          </div>
-                        )}
-                      </div>
-                      <h3 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-orange-500">
-                        {video.title}
-                      </h3>
-                      <div className="flex items-center space-x-2 text-xs text-gray-400">
-                        <span>{video.uploader}</span>
-                        <span>|</span>
-                        <span>{video.views}</span>
-                      </div>
+                        <h3 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-orange-500">
+                          {video.title}
+                        </h3>
+                        <div className="flex items-center space-x-2 text-xs text-gray-400">
+                          <span>{video.uploader}</span>
+                          <span>|</span>
+                          <span>{video.views}</span>
+                        </div>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -462,22 +479,94 @@ export default function VideoPage() {
                   {relatedVideos.map((video) => (
                     <div
                       key={video.id}
-                      onClick={() => handleVideoClick(video.id)}
-                      className="group cursor-pointer"
+                      className="group cursor-pointer block relative"
                     >
-                      <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold">
-                          HD {video.duration}
+                      <Link
+                        href={`/video/${video.id}`}
+                        className="block"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          
+                          {/* Play button overlay on hover */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                            <div className="w-14 h-14 bg-black/70 hover:bg-black/80 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200">
+                              <Play className="w-7 h-7 fill-white text-white ml-1" />
+                            </div>
+                          </div>
+
+                          <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold z-20">
+                            HD {video.duration}
+                          </div>
+
+                          {/* Dark overlay on hover */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 z-[5]"></div>
+
+                          {/* Three-dot menu button - appears on hover */}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+                                <button
+                                  className="w-8 h-8 bg-black/80 hover:bg-black/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  aria-label="More options"
+                                >
+                                  <MoreVertical className="w-4 h-4 text-white" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                align="end"
+                                className="w-48 bg-[#1a1a1a] border-gray-800 text-white z-[10000]"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Bookmark className="w-4 h-4 mr-2" />
+                                  Save
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Share2 className="w-4 h-4 mr-2" />
+                                  Share
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-gray-800" />
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Flag className="w-4 h-4 mr-2" />
+                                  Report
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
-                      </div>
-                      <h3 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-orange-500">
-                        {video.title}
-                      </h3>
+                        <h3 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-orange-500">
+                          {video.title}
+                        </h3>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -488,27 +577,99 @@ export default function VideoPage() {
                   {moreVideos.slice(0, 6).map((video) => (
                     <div
                       key={video.id}
-                      onClick={() => handleVideoClick(video.id)}
-                      className="group cursor-pointer"
+                      className="group cursor-pointer block relative"
                     >
-                      <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold">
-                          {video.duration}
+                      <Link
+                        href={`/video/${video.id}`}
+                        className="block"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          
+                          {/* Play button overlay on hover */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                            <div className="w-14 h-14 bg-black/70 hover:bg-black/80 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200">
+                              <Play className="w-7 h-7 fill-white text-white ml-1" />
+                            </div>
+                          </div>
+
+                          <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs font-semibold z-20">
+                            {video.duration}
+                          </div>
+
+                          {/* Dark overlay on hover */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 z-[5]"></div>
+
+                          {/* Three-dot menu button - appears on hover */}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+                                <button
+                                  className="w-8 h-8 bg-black/80 hover:bg-black/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  aria-label="More options"
+                                >
+                                  <MoreVertical className="w-4 h-4 text-white" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                align="end"
+                                className="w-48 bg-[#1a1a1a] border-gray-800 text-white z-[10000]"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Bookmark className="w-4 h-4 mr-2" />
+                                  Save
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Share2 className="w-4 h-4 mr-2" />
+                                  Share
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-gray-800" />
+                                <DropdownMenuItem
+                                  className="text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Flag className="w-4 h-4 mr-2" />
+                                  Report
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
-                      </div>
-                      <h3 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-orange-500">
-                        {video.title}
-                      </h3>
-                      <div className="flex items-center space-x-2 text-xs text-gray-400">
-                        <span>{video.uploader}</span>
-                        <span>|</span>
-                        <span>{video.views}</span>
-                      </div>
+                        <h3 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-orange-500">
+                          {video.title}
+                        </h3>
+                        <div className="flex items-center space-x-2 text-xs text-gray-400">
+                          <span>{video.uploader}</span>
+                          <span>|</span>
+                          <span>{video.views}</span>
+                        </div>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -587,25 +748,40 @@ export default function VideoPage() {
               {relatedVideos.slice(0, 6).map((video) => (
                 <div
                   key={video.id}
-                  onClick={() => handleVideoClick(video.id)}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer block relative"
                 >
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 left-2 bg-black/80 px-1.5 py-0.5 rounded text-xs font-semibold">
-                      W
+                  <Link
+                    href={`/video/${video.id}`}
+                    className="block"
+                  >
+                    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      
+                      {/* Play button overlay on hover */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <div className="w-10 h-10 bg-black/70 hover:bg-black/80 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200">
+                          <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                        </div>
+                      </div>
+
+                      <div className="absolute top-2 left-2 bg-black/80 px-1.5 py-0.5 rounded text-xs font-semibold z-20">
+                        W
+                      </div>
+                      <div className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-0.5 rounded text-xs font-semibold z-20">
+                        {video.isHD ? 'HD' : '4K'} {video.duration}
+                      </div>
+
+                      {/* Dark overlay on hover */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 z-[5]"></div>
                     </div>
-                    <div className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-0.5 rounded text-xs font-semibold">
-                      {video.isHD ? 'HD' : '4K'} {video.duration}
-                    </div>
-                  </div>
-                  <h3 className="text-xs font-medium line-clamp-2 group-hover:text-orange-500">
-                    {video.title}
-                  </h3>
+                    <h3 className="text-xs font-medium line-clamp-2 group-hover:text-orange-500">
+                      {video.title}
+                    </h3>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -636,24 +812,39 @@ export default function VideoPage() {
                 {relatedVideos.map((video) => (
                   <div
                     key={video.id}
-                    onClick={() => handleVideoClick(video.id)}
-                    className="flex space-x-3 group cursor-pointer"
+                    className="flex space-x-3 group cursor-pointer block relative"
                   >
-                    <div className="relative w-40 h-24 rounded-lg overflow-hidden bg-gray-800 flex-shrink-0">
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute bottom-1 right-1 bg-black/80 px-1.5 py-0.5 rounded text-xs font-semibold">
-                        HD {video.duration}
+                    <Link
+                      href={`/video/${video.id}`}
+                      className="flex space-x-3 w-full"
+                    >
+                      <div className="relative w-40 h-24 rounded-lg overflow-hidden bg-gray-800 flex-shrink-0">
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        
+                        {/* Play button overlay on hover */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                          <div className="w-8 h-8 bg-black/70 hover:bg-black/80 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200">
+                            <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                          </div>
+                        </div>
+
+                        <div className="absolute bottom-1 right-1 bg-black/80 px-1.5 py-0.5 rounded text-xs font-semibold z-20">
+                          HD {video.duration}
+                        </div>
+
+                        {/* Dark overlay on hover */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 z-[5]"></div>
                       </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium line-clamp-2 group-hover:text-orange-500 mb-1">
-                        {video.title}
-                      </h4>
-                    </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium line-clamp-2 group-hover:text-orange-500 mb-1">
+                          {video.title}
+                        </h4>
+                      </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -662,10 +853,163 @@ export default function VideoPage() {
         </div>
       </div>
 
+      {/* Footer */}
+      <footer className="mt-12 pt-8">
+        <div className="container mx-auto px-6 lg:px-8 max-w-[1400px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {/* xHamster Column */}
+            <div>
+              <h3 className="text-white font-semibold mb-4">xHamster</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    xHamster Shop
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Press
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Creator's Blog
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Advertising
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    xHamster Awards 2025
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Help Column */}
+            <div>
+              <h3 className="text-white font-semibold mb-4" style={{ fontFamily: 'inherit' }}>Help</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    FAQ
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Contact us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Content Removal
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Improve xHamster
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal Column */}
+            <div>
+              <h3 className="text-white font-semibold mb-4" style={{ fontFamily: 'inherit' }}>Legal</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Terms of use
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Privacy policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Cookies policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    DMCA/Copyright
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Parental Controls
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    EU DSA
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors">
+                    Trust and Safety
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Start making money with us Column */}
+            <div>
+              <h3 className="text-white font-semibold mb-4" style={{ fontFamily: 'inherit' }}>Start making money with us</h3>
+              <ul className="space-y-2 text-sm text-gray-400 mb-6">
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors" style={{ fontFamily: 'inherit' }}>
+                    Camgirls Wanted
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors" style={{ fontFamily: 'inherit' }}>
+                    Content Creators Program
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-orange-500 transition-colors" style={{ fontFamily: 'inherit' }}>
+                    Creator Contest
+                  </a>
+                </li>
+              </ul>
+              <div>
+                <h4 className="text-white font-semibold mb-3" style={{ fontFamily: 'inherit' }}>Monetize your content</h4>
+                <div className="flex items-center gap-3">
+                  <Button className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 flex items-center gap-2" style={{ fontFamily: 'inherit' }}>
+                    <Play className="w-4 h-4 fill-green-500 text-green-500" />
+                    Become a creator
+                  </Button>
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 border-2 border-[#1a1a1a]"
+                        title={`Creator ${i}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
       {/* Cookie Consent Banner */}
       {showCookieBanner && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#2a2a2a] border-t border-gray-700 px-4 py-3 z-50">
-          <div className="container mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#2a2a2a] border-t border-gray-700 px-6 lg:px-8 py-3 z-50">
+          <div className="container mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 max-w-[1400px]">
             <p className="text-xs sm:text-sm text-gray-300 flex-1">
               Cookies help us deliver our services. By using this website, you agree with our use of cookies.{' '}
               <a href="#" className="text-orange-500 hover:text-orange-400 underline">
