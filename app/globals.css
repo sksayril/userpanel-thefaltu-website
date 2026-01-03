@@ -171,3 +171,370 @@
     display: none;
   }
 }
+
+/* xHamster-specific styles matching uicode.html */
+@layer components {
+  /* Main wrapper */
+  .main-wrap {
+    @apply w-full min-h-screen bg-black;
+  }
+
+  /* Width wrap - container with max width */
+  .width-wrap {
+    @apply w-full max-w-[1600px] mx-auto px-6;
+  }
+
+  /* Header wrapper */
+  .header-wrapper {
+    @apply w-full bg-[#2a2a2a] border-b border-[#1a1a1a];
+  }
+
+  .header-wrapper.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+  }
+
+  /* Top header section */
+  .top-header {
+    @apply bg-[#2a2a2a] border-b border-[#1a1a1a];
+  }
+
+  /* Guest header */
+  .guest.header {
+    @apply w-full;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    @apply w-64 flex-shrink-0;
+  }
+
+  /* Video thumb list */
+  .thumb-list {
+    @apply grid gap-4;
+  }
+
+  .thumb-list--sidebar {
+    @apply grid-cols-3;
+  }
+
+  .thumb-list--bigger-with-cube {
+    @apply relative;
+  }
+
+  /* Video thumb item */
+  .video-thumb {
+    @apply block relative;
+  }
+
+  .video-thumb--type-video {
+    @apply cursor-pointer;
+  }
+
+  /* Video thumb image container */
+  .video-thumb__image-container {
+    @apply relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2;
+  }
+
+  .thumb-image-container__image {
+    @apply w-full h-full object-cover transition-all duration-300;
+  }
+
+  .thumb-image-container__duration {
+    @apply absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-semibold text-white z-20;
+  }
+
+  /* Video thumb info */
+  .video-thumb-info {
+    @apply relative;
+  }
+
+  .video-thumb-info__name {
+    @apply block text-sm font-medium text-white hover:text-[#f7000a] line-clamp-2 mb-1.5 transition-colors;
+  }
+
+  .video-thumb__trigger {
+    @apply absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity z-30;
+  }
+
+  /* Video thumb uploader */
+  .video-thumb-uploader {
+    @apply flex items-center space-x-1.5 text-xs text-gray-400;
+  }
+
+  .video-uploader-data {
+    @apply flex items-center space-x-1.5 min-w-0 flex-1;
+  }
+
+  .video-uploader-logo {
+    @apply w-5 h-5 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex-shrink-0;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .video-uploader__name {
+    @apply text-gray-400 hover:text-white transition-colors truncate;
+  }
+
+  .video-thumb-uploader__separator {
+    @apply w-1 h-1 rounded-full bg-gray-600 flex-shrink-0;
+  }
+
+  .video-thumb-views {
+    @apply text-gray-500 flex-shrink-0;
+  }
+
+  /* Search container */
+  .search-container {
+    @apply relative flex-1 max-w-2xl mx-4 md:mx-8;
+  }
+
+  .search-text {
+    @apply w-full bg-black border-gray-700 text-white placeholder-gray-500 pl-14 pr-24 h-11 text-base rounded-full;
+  }
+
+  .search-submit-container {
+    @apply absolute right-2.5 top-1/2 -translate-y-1/2;
+  }
+
+  .search-submit {
+    @apply text-[#f7000a] hover:text-[#e60009] p-1.5 rounded hover:bg-gray-700 transition-colors;
+  }
+
+  /* Section container */
+  .section-container {
+    @apply flex items-center justify-between py-3 md:py-4 gap-4;
+  }
+
+  /* Logo container */
+  .logo-container {
+    @apply flex items-center;
+  }
+
+  .logo {
+    @apply flex items-center space-x-2.5;
+  }
+
+  /* Orientation dropdown */
+  .orientationDropdownContainer {
+    @apply hidden md:flex items-center;
+  }
+
+  .orientationDropdownTrigger {
+    @apply flex items-center space-x-1 p-2 hover:bg-gray-800 rounded transition-colors;
+  }
+
+  /* Category filters */
+  .filters-6d561 {
+    @apply space-y-3;
+  }
+
+  .container-ec133 {
+    @apply mb-3;
+  }
+
+  .bold-8643e {
+    @apply text-sm font-semibold text-white mb-3;
+  }
+
+  .primary-8643e {
+    @apply text-white;
+  }
+
+  .items-ec133 {
+    @apply space-y-1;
+  }
+
+  .main-357cb {
+    @apply relative;
+  }
+
+  .main-357cb.checked-357cb .controlIcon-357cb {
+    @apply bg-[#f7000a] border-[#f7000a];
+  }
+
+  .label-357cb {
+    @apply flex items-center space-x-2 cursor-pointer group;
+  }
+
+  .control-357cb {
+    @apply relative;
+  }
+
+  .controlInput-357cb {
+    @apply sr-only;
+  }
+
+  .controlIcon-357cb {
+    @apply w-5 h-5 rounded border-2 flex items-center justify-center transition-colors border-gray-600 group-hover:border-gray-500;
+  }
+
+  .content-357cb {
+    @apply flex items-center space-x-2 flex-1;
+  }
+
+  .labelText-357cb {
+    @apply flex items-center space-x-2;
+  }
+
+  .checkboxLabel-ec133 {
+    @apply flex items-center space-x-2;
+  }
+
+  /* Quality filter buttons */
+  .content-c0c68 {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .container-5984a {
+    @apply px-3 py-1.5 rounded text-sm transition-colors;
+  }
+
+  .container-5984a.ghost-5984a {
+    @apply bg-transparent text-gray-400 border border-gray-700 hover:border-gray-600 hover:text-gray-300;
+  }
+
+  .container-5984a.big-5984a {
+    @apply text-sm;
+  }
+
+  .container-5984a.border-radius-small-5984a {
+    @apply rounded;
+  }
+
+  .container-5984a.pointer-5984a {
+    @apply cursor-pointer;
+  }
+
+  .label-5984a {
+    @apply text-sm;
+  }
+
+  /* Sort by dropdown */
+  .container-42143 {
+    @apply relative;
+  }
+
+  .main-8c1bf {
+    @apply relative;
+  }
+
+  .fullWidth-8c1bf {
+    @apply w-full;
+  }
+
+  .size-small-8c1bf {
+    @apply text-sm;
+  }
+
+  .header-8c1bf {
+    @apply mb-2;
+  }
+
+  .label-8c1bf {
+    @apply text-sm font-semibold text-white;
+  }
+
+  .data-8c1bf {
+    @apply relative;
+  }
+
+  .input-8c1bf {
+    @apply relative;
+  }
+
+  .inputWrapper-8c1bf {
+    @apply relative;
+  }
+
+  .text-8c1bf {
+    @apply w-full bg-[#2a2a2a] border border-gray-700 text-white text-sm px-3 py-2 rounded;
+  }
+
+  /* Category search */
+  .container-ebacc {
+    @apply relative;
+  }
+
+  .tagSetBefore-ebacc {
+    @apply mt-3;
+  }
+
+  .content-ebacc {
+    @apply space-y-2;
+  }
+
+  /* Result section */
+  .result-section {
+    @apply py-6;
+  }
+
+  .filter-up-section {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .results-count {
+    @apply text-sm text-gray-400;
+  }
+
+  .result-query {
+    @apply text-2xl font-bold text-white mb-4;
+  }
+
+  /* Mixed section */
+  .mixed-section {
+    @apply w-full;
+  }
+
+  .index-videos {
+    @apply relative;
+  }
+
+  /* Pagination */
+  .pager-section {
+    @apply mt-6 mb-6;
+  }
+
+  .pager-container {
+    @apply flex justify-center items-center;
+  }
+
+  .test-pager {
+    @apply flex items-center space-x-1;
+  }
+
+  .xh-paginator-button {
+    @apply px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors;
+  }
+
+  .xh-paginator-button.active {
+    @apply bg-gray-800 text-white;
+  }
+
+  /* Dark theme adjustments */
+  .dark .video-thumb-info__name {
+    @apply text-white;
+  }
+
+  .dark .video-thumb-info__name:hover {
+    @apply text-[#f7000a];
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .thumb-list--sidebar {
+      @apply grid-cols-1;
+    }
+    
+    .sidebar {
+      @apply w-full;
+    }
+    
+    .width-wrap {
+      @apply px-4;
+    }
+  }
+}

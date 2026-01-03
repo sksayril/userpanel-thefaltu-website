@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -30,18 +30,53 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-// Mock video data
-const videoData = {
-  id: 1,
-  title: 'Cuckold Wife Secretly Fucks Her Husband\'s Friend Next to Him - Max Betancur and Luna Vitaler',
-  thumbnail: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  duration: '08:12',
-  views: '19,90,836',
-  likes: '99%',
-  uploader: 'MaxBetancur',
-  uploaderSubscribers: '11.8K',
-  tags: ['FapHouse', 'LunaVitaler', 'Colombian', 'Big Ass', 'Big Cock', 'Blowjob', 'Cuckold', 'Doggy Style', 'Fantasy', 'HD Videos', 'In Spanish'],
-  description: 'Watch this amazing video featuring Max Betancur and Luna Vitaler in an intense scene.',
+// API endpoint
+const API_BASE_URL = 'https://7cvccltb-3100.inc1.devtunnels.ms/api/movies';
+
+// Function to format duration from seconds
+const formatDuration = (seconds: number): string => {
+  if (!seconds || isNaN(seconds)) return '0:00';
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+};
+
+// Function to format views count
+const formatViews = (views: number): string => {
+  if (views >= 1000000) {
+    return `${(views / 1000000).toFixed(1)}M`;
+  } else if (views >= 1000) {
+    return `${(views / 1000).toFixed(1)}K`;
+  }
+  return views.toString();
+};
+
+// Function to get user's country
+const getUserCountry = async (): Promise<string> => {
+  if (typeof window === 'undefined') {
+    return 'IN';
+  }
+  try {
+    if (typeof navigator !== 'undefined' && navigator.language) {
+      const locale = navigator.language;
+      const country = locale.split('-')[1];
+      if (country && country.length === 2) {
+        return country.toUpperCase();
+      }
+    }
+  } catch (error) {
+    // Ignore errors
+  }
+  return 'IN';
+};
+
+// Function to check if a string is a MongoDB ObjectId (24 hex characters)
+const isObjectId = (str: string): boolean => {
+  return /^[0-9a-fA-F]{24}$/.test(str);
 };
 
 const relatedVideos = [
@@ -207,9 +242,154 @@ const categories = ['Amateur', 'Blowjob', 'Latina', 'Big Ass', 'Big Tits', 'Colo
 
 export default function VideoPage() {
   const params = useParams();
+  const slug = params?.id as string;
   const [activeTab, setActiveTab] = useState('related');
   const [showPromoBanner, setShowPromoBanner] = useState(true);
   const [showCookieBanner, setShowCookieBanner] = useState(true);
+  const [movieData, setMovieData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedQuality, setSelectedQuality] = useState<string>('720p');
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string>('');
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Fetch movie data from API
+  useEffect(() => {
+    const fetchMovieData = async () => {
+      if (!slug) return;
+      
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Get user's country
+        const userCountry = await getUserCountry();
+
+        // The API endpoint handles both slug and ObjectId
+        // Fetch movie by slug or ObjectId
+        const response = await fetch(`${API_BASE_URL}/${slug}`, {
+          headers: {
+            'Accept': 'application/json',
+            'X-Country-Code': userCountry,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch movie data');
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          setMovieData(data.data);
+          
+          // Set default video quality (prefer 720p, then 1080p, then first available)
+          const videos = data.data.Videos || [];
+          const preferredVideo = videos.find((v: any) => v.Quality === '720p') ||
+                                 videos.find((v: any) => v.Quality === '1080p') ||
+                                 videos.find((v: any) => v.Quality === '480p') ||
+                                 videos[0];
+          
+          if (preferredVideo) {
+            setSelectedQuality(preferredVideo.Quality);
+            setCurrentVideoUrl(preferredVideo.Url);
+          }
+        } else {
+          throw new Error('Invalid API response');
+        }
+      } catch (err) {
+        console.error('Error fetching movie data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load movie');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovieData();
+  }, [slug]);
+
+  // Update video URL when quality changes
+  useEffect(() => {
+    if (movieData?.Videos) {
+      const selectedVideo = movieData.Videos.find((v: any) => v.Quality === selectedQuality);
+      if (selectedVideo) {
+        setCurrentVideoUrl(selectedVideo.Url);
+      }
+    }
+  }, [selectedQuality, movieData]);
+
+  // Use movie data or fallback to mock data
+  const videoData = movieData ? {
+    id: movieData._id,
+    title: movieData.Title || 'Untitled',
+    thumbnail: movieData.Thumbnail || movieData.Poster || 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    duration: movieData.Videos?.[0]?.Duration ? formatDuration(movieData.Videos[0].Duration) : '0:00',
+    views: formatViews(movieData.Views || 0),
+    likes: movieData.Likes || 0,
+    uploader: movieData.Channel?.Name || 'Unknown',
+    uploaderSubscribers: '11.8K',
+    tags: movieData.Tags || [],
+    description: movieData.Description || '',
+    videos: movieData.Videos || [],
+    subtitles: movieData.Subtitles || [],
+    category: movieData.Category,
+    subCategory: movieData.SubCategory,
+    cast: movieData.Cast || [],
+    comments: movieData.topComments || [],
+    isPremium: movieData.IsPremium || false,
+    rating: movieData.Rating || 0,
+    isFavorite: movieData.isFavorite || false,
+    isLiked: movieData.isLiked || false,
+    watchHistory: movieData.watchHistory,
+  } : {
+    id: 1,
+    title: 'Loading...',
+    thumbnail: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    duration: '0:00',
+    views: '0',
+    likes: 0,
+    uploader: 'Loading...',
+    uploaderSubscribers: '0',
+    tags: [],
+    description: '',
+    videos: [],
+    subtitles: [],
+    category: null,
+    subCategory: null,
+    cast: [],
+    comments: [],
+    isPremium: false,
+    rating: 0,
+    isFavorite: false,
+    isLiked: false,
+    watchHistory: null,
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-[#1a1a1a] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading video...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen w-full bg-[#1a1a1a] text-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Error: {error}</p>
+          <Link href="/">
+            <Button className="bg-orange-600 hover:bg-orange-700 text-white">
+              Go Back Home
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-[#1a1a1a] text-white" style={{ backgroundColor: '#1a1a1a', minHeight: '100vh', width: '100%' }}>
@@ -217,67 +397,110 @@ export default function VideoPage() {
 
       {/* Promotional Banner */}
       {showPromoBanner && (
-        <div className="bg-gradient-to-r from-purple-900 via-blue-900 to-purple-900 py-3 md:py-4 relative overflow-hidden border-b border-purple-800/50">
+        <div className="bg-gradient-to-r from-purple-900 via-blue-900 to-purple-900 py-4 relative overflow-hidden border-b border-purple-800/50">
           <div className="absolute inset-0 opacity-30">
             <div className="absolute inset-0" style={{
               backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)',
             }}></div>
           </div>
-          <div className="container mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center sm:text-left relative z-10 max-w-[1400px]">
-            <span className="text-sm font-semibold whitespace-nowrap text-yellow-300">WINTER MAGIC SALE ❄️ ⭐</span>
-            <div className="flex items-center space-x-1.5">
-              <span className="text-sm text-white">December Deals Kickoff</span>
+          <div className="container mx-auto px-8 flex flex-row items-center justify-center gap-4 text-left relative z-10 max-w-[1600px]">
+            <span className="text-base font-semibold whitespace-nowrap text-yellow-300">WINTER MAGIC SALE ❄️ ⭐</span>
+            <div className="flex items-center space-x-2">
+              <span className="text-base text-white">December Deals Kickoff</span>
               <button className="text-gray-300 hover:text-white transition-colors" aria-label="More information">
                 <Info className="w-4 h-4" />
               </button>
             </div>
-            <Button className="bg-[#f7000a] hover:bg-[#e60009] text-white text-sm whitespace-nowrap rounded-md px-4 py-2 h-8 font-semibold shadow-lg">GET +14 MONTHS FREE</Button>
+            <Button className="bg-[#f7000a] hover:bg-[#e60009] text-white text-base whitespace-nowrap rounded-md px-5 py-2.5 h-10 font-semibold shadow-lg">GET +14 MONTHS FREE</Button>
           </div>
           <button 
             onClick={() => setShowPromoBanner(false)}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-1 z-20 rounded hover:bg-white/10 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-1.5 z-20 rounded hover:bg-white/10 transition-colors"
             aria-label="Close banner"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
       )}
 
-      <div className="container mx-auto px-6 lg:px-8 py-6 max-w-[1400px]">
+      <div className="container mx-auto px-8 py-6 max-w-[1600px]">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main Video Section */}
           <div className="flex-1">
             {/* Video Player */}
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-4">
-              <img
-                src={videoData.thumbnail}
-                alt={videoData.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button className="w-20 h-20 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all">
-                  <Play className="w-10 h-10 fill-white text-white ml-1" />
-                </button>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white text-sm">00:00 / {videoData.duration}</span>
-                  <div className="flex items-center space-x-2">
-                    <button className="text-white hover:text-gray-300">
-                      <Settings className="w-5 h-5" />
-                    </button>
-                    <button className="text-white hover:text-gray-300">
-                      <span className="text-sm">⛶</span>
+              {currentVideoUrl ? (
+                <video
+                  src={currentVideoUrl}
+                  className="w-full h-full"
+                  controls
+                  poster={videoData.thumbnail}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                >
+                  {videoData.subtitles.map((subtitle: any, index: number) => (
+                    <track
+                      key={index}
+                      kind="subtitles"
+                      srcLang={subtitle.LanguageCode || 'en'}
+                      label={subtitle.Language || 'English'}
+                      src={subtitle.Url}
+                      default={index === 0}
+                    />
+                  ))}
+                </video>
+              ) : (
+                <>
+                  <img
+                    src={videoData.thumbnail}
+                    alt={videoData.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button 
+                      onClick={() => setIsPlaying(true)}
+                      className="w-20 h-20 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all"
+                    >
+                      <Play className="w-10 h-10 fill-white text-white ml-1" />
                     </button>
                   </div>
+                </>
+              )}
+              
+              {/* Quality Selector */}
+              {videoData.videos && videoData.videos.length > 1 && (
+                <div className="absolute top-4 right-4 z-20">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="bg-black/80 border-gray-700 text-white hover:bg-black/90">
+                        <Settings className="w-4 h-4 mr-2" />
+                        {selectedQuality}
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-[#1a1a1a] border-gray-800">
+                      {videoData.videos.map((video: any) => (
+                        <DropdownMenuItem
+                          key={video.Quality}
+                          className={`text-white hover:bg-gray-800 cursor-pointer ${
+                            selectedQuality === video.Quality ? 'bg-gray-800' : ''
+                          }`}
+                          onClick={() => setSelectedQuality(video.Quality)}
+                        >
+                          {video.Quality} {video.Duration && `(${formatDuration(video.Duration)})`}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                <div className="w-full bg-gray-600 h-1 rounded-full">
-                  <div className="bg-orange-600 h-1 rounded-full" style={{ width: '0%' }}></div>
+              )}
+
+              {/* Subtitles Indicator */}
+              {videoData.subtitles && videoData.subtitles.length > 0 && (
+                <div className="absolute top-4 left-4 bg-black/60 px-2 py-1 rounded text-xs">
+                  Subtitles: {videoData.subtitles.map((s: any) => s.Language).join(', ')}
                 </div>
-              </div>
-              <div className="absolute top-4 right-4 bg-black/60 px-2 py-1 rounded text-xs">
-                Subtitles: Yes and it's very bad but she likes it
-              </div>
+              )}
             </div>
 
             {/* Video Title and Stats */}
@@ -287,15 +510,28 @@ export default function VideoPage() {
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <Eye className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-300">{videoData.views}</span>
+                    <span className="text-gray-300">{videoData.views} views</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <ThumbsUp className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-300">{videoData.likes}</span>
+                    <span className="text-gray-300">{formatViews(videoData.likes)} likes</span>
                   </div>
+                  {videoData.rating > 0 && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-yellow-400">⭐</span>
+                      <span className="text-gray-300">{videoData.rating.toFixed(1)}</span>
+                    </div>
+                  )}
+                  {videoData.isPremium && (
+                    <Badge className="bg-yellow-600 text-white">Premium</Badge>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={`${videoData.isLiked ? 'text-orange-500' : 'text-gray-300'} hover:text-white`}
+                  >
                     <ThumbsUp className="w-4 h-4 mr-1" />
                     Like
                   </Button>
@@ -303,7 +539,11 @@ export default function VideoPage() {
                     <Share2 className="w-4 h-4 mr-1" />
                     Share
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={`${videoData.isFavorite ? 'text-orange-500' : 'text-gray-300'} hover:text-white`}
+                  >
                     <Bookmark className="w-4 h-4 mr-1" />
                     Save
                   </Button>
@@ -311,26 +551,73 @@ export default function VideoPage() {
               </div>
             </div>
 
+            {/* Description */}
+            {videoData.description && (
+              <div className="mb-4 p-4 bg-[#0f0f0f] rounded-lg">
+                <p className="text-gray-300 leading-relaxed">{videoData.description}</p>
+              </div>
+            )}
+
             {/* Creator Info and Tags */}
             <div className="mb-6">
               <div className="flex items-center space-x-4 mb-4 flex-wrap">
-                <a href="#" className="text-orange-500 hover:text-orange-400 font-semibold">
+                <Link href={`/channel/${videoData.uploader}`} className="text-orange-500 hover:text-orange-400 font-semibold">
                   {videoData.uploader}
-                </a>
+                </Link>
                 <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
                   Subscribe {videoData.uploaderSubscribers}
                 </Button>
-                {videoData.tags.map((tag, index) => (
-                  <a
+                {videoData.category && (
+                  <Link href={`/category/${videoData.category.Slug}`} className="text-cyan-400 hover:text-cyan-300 text-sm">
+                    {videoData.category.Name}
+                  </Link>
+                )}
+                {videoData.subCategory && (
+                  <Link href={`/category/${videoData.subCategory.Slug}`} className="text-cyan-400 hover:text-cyan-300 text-sm">
+                    {videoData.subCategory.Name}
+                  </Link>
+                )}
+                {videoData.tags.map((tag: string, index: number) => (
+                  <Link
                     key={index}
-                    href="#"
+                    href={`/?tag=${tag}`}
                     className="text-cyan-400 hover:text-cyan-300 text-sm"
                   >
                     {tag}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
+
+            {/* Cast Section */}
+            {videoData.cast && videoData.cast.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Cast</h3>
+                <div className="flex flex-wrap gap-3">
+                  {videoData.cast.map((actor: any) => (
+                    <Link
+                      key={actor._id}
+                      href={`/actor/${actor.Slug}`}
+                      className="flex items-center space-x-2 bg-[#0f0f0f] rounded-lg p-2 hover:bg-gray-800 transition-colors"
+                    >
+                      {actor.Image && (
+                        <img
+                          src={actor.Image}
+                          alt={actor.Name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      )}
+                      <div>
+                        <p className="text-sm font-medium">{actor.Name}</p>
+                        {actor.Nationality && (
+                          <p className="text-xs text-gray-400">{actor.Nationality}</p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Watch More Button */}
             <div className="mb-6">
@@ -678,32 +965,77 @@ export default function VideoPage() {
 
             {/* Comments Section */}
             <div className="mb-6">
-              <h2 className="text-xl font-bold mb-4">Comments</h2>
-              <div className="space-y-4">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="flex space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                      {comment.avatar}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-semibold">{comment.username}</span>
-                        <span className="text-xs text-gray-400">{comment.time}</span>
+              <h2 className="text-xl font-bold mb-4">Comments ({videoData.comments.length})</h2>
+              {videoData.comments && videoData.comments.length > 0 ? (
+                <div className="space-y-4">
+                  {videoData.comments.map((comment: any) => (
+                    <div key={comment._id} className="flex space-x-3">
+                      <div className="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                        {comment.User?.ProfilePicture ? (
+                          <img
+                            src={comment.User.ProfilePicture}
+                            alt={comment.User.Name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          <span>{comment.User?.Name?.charAt(0) || 'U'}</span>
+                        )}
                       </div>
-                      <p className="text-gray-300 mb-2">{comment.comment}</p>
-                      <div className="flex items-center space-x-4">
-                        <button className="flex items-center space-x-1 text-gray-400 hover:text-white">
-                          <ThumbsUp className="w-4 h-4" />
-                          <span className="text-xs">{comment.likes}</span>
-                        </button>
-                        <button className="text-gray-400 hover:text-white text-xs">
-                          Reply
-                        </button>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="font-semibold">{comment.User?.Name || 'Anonymous'}</span>
+                          <span className="text-xs text-gray-400">
+                            {comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'Recently'}
+                          </span>
+                        </div>
+                        <p className="text-gray-300 mb-2">{comment.Comment}</p>
+                        <div className="flex items-center space-x-4">
+                          <button className="flex items-center space-x-1 text-gray-400 hover:text-white">
+                            <ThumbsUp className="w-4 h-4" />
+                            <span className="text-xs">{formatViews(comment.Likes || 0)}</span>
+                          </button>
+                          {comment.Replies && comment.Replies.length > 0 && (
+                            <button className="text-gray-400 hover:text-white text-xs">
+                              {comment.Replies.length} Replies
+                            </button>
+                          )}
+                          <button className="text-gray-400 hover:text-white text-xs">
+                            Reply
+                          </button>
+                        </div>
+                        {/* Replies */}
+                        {comment.Replies && comment.Replies.length > 0 && (
+                          <div className="mt-3 ml-4 space-y-2 border-l-2 border-gray-800 pl-4">
+                            {comment.Replies.map((reply: any, index: number) => (
+                              <div key={index} className="flex space-x-2">
+                                <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs flex-shrink-0">
+                                  {reply.User?.Name?.charAt(0) || 'R'}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <span className="font-semibold text-sm">{reply.User?.Name || 'Anonymous'}</span>
+                                  </div>
+                                  <p className="text-gray-400 text-sm mb-1">{reply.Comment}</p>
+                                  <div className="flex items-center space-x-3">
+                                    <button className="flex items-center space-x-1 text-gray-500 hover:text-white text-xs">
+                                      <ThumbsUp className="w-3 h-3" />
+                                      <span>{formatViews(reply.Likes || 0)}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-400">
+                  <p>No comments yet. Be the first to comment!</p>
+                </div>
+              )}
 
               {/* Comments Pagination */}
               <div className="mt-6 flex items-center justify-center space-x-2">
