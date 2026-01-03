@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 // API endpoint
-const API_BASE_URL = 'https://7cvccltb-3100.inc1.devtunnels.ms/api/movies';
+const API_BASE_URL = 'https://api.xhamster01.com/api/movies';
 
 // Function to format duration from seconds
 const formatDuration = (seconds: number): string => {

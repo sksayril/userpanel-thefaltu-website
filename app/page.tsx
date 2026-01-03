@@ -26,7 +26,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 
 // API endpoint
-const API_BASE_URL = 'https://7cvccltb-3100.inc1.devtunnels.ms/api/movies/all';
+const API_BASE_URL = 'https://api.xhamster01.com/api/movies/all';
 
 // Function to get user's country
 const getUserCountry = async (): Promise<string> => {
